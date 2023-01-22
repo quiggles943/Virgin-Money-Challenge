@@ -13,6 +13,9 @@ public class StatisticsGenerator {
 
     private List<Transaction> transactionList = new ArrayList<>();
 
+    /**
+     * Used to calculate statistics of a users transactions
+     */
     public StatisticsGenerator(){
 
     }
@@ -41,8 +44,6 @@ public class StatisticsGenerator {
                 comparator = Comparator.comparing(Transaction::getTransactionDate);
         }
         return getTransactionsFromList(category,comparator);
-        //List<Transaction> filteredTransactions = (List<Transaction>) transactionList.stream().filter(x-> x.getCategory().equalsIgnoreCase(category)).sorted(comparator).collect(Collectors.toList());
-        //return filteredTransactions;
     }
 
     /**
@@ -146,10 +147,21 @@ public class StatisticsGenerator {
         return average;
     }
 
+    /**
+     * Retrieves the transactions that match the given category
+     * @param category The category to filter on
+     * @return The transactions that match the category
+     */
     public List<Transaction> getTransactionsFromList(String category){
         return getTransactionsFromList(category,null);
     }
 
+    /**
+     * Retrueves the transactions that match the given category sorted by the given comparator
+     * @param category The category to filter on
+     * @param comparator The comparator used to sort the results
+     * @return
+     */
     public List<Transaction> getTransactionsFromList(String category, Comparator comparator){
         Stream<Transaction> transactionStream = transactionList.stream().filter(x-> x.getCategory().equalsIgnoreCase(category));
         if(comparator != null)

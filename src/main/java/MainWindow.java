@@ -1,6 +1,7 @@
 import calculation.StatisticsGenerator;
 import calculation.enums.SortType;
 import models.Transaction;
+import models.TransactionTableModel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -29,7 +30,10 @@ public class MainWindow {
     private JLabel infoLabel;
     private JLabel yearLabel;
     private JTextPane resultPane;
+    private JButton assignCategoryButton;
     private StatisticsGenerator statisticsGenerator;
+
+    private List<Transaction> listedTransactions;
 
     public static void main(String[] args){
         JFrame frame = new JFrame();
@@ -102,6 +106,21 @@ public class MainWindow {
                 resultPane.setText(resultText);
             }
         });
+        assignCategoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = contentTable.getSelectedRow();
+                if(selectedRow == -1)
+                    return;
+                String result = JOptionPane.showInputDialog("Assign category to selected transaction");
+                if(result != null){
+                    Transaction transaction = listedTransactions.get(contentTable.convertRowIndexToModel(selectedRow));
+                    transaction.setCategory(result);
+                    populateCategorySelector(listedTransactions);
+                    rootPanel.repaint();
+                }
+            }
+        });
         setupRadioButtons();
         statisticsGenerator = new StatisticsGenerator();
         ArrayList<Transaction> transactions = generateContent();
@@ -113,6 +132,9 @@ public class MainWindow {
         transactionsForCategory.size();
     }
 
+    /**
+     * Setups up the functionality of the radio buttons
+     */
     private void setupRadioButtons(){
         allTransactionsForACategoryButton.setActionCommand("allForCategory");
         allTransactionsForACategoryButton.addActionListener(new ActionListener() {
@@ -178,6 +200,10 @@ public class MainWindow {
         selectionGroup.add(lowestSpendInARadioButton);
     }
 
+    /**
+     * Generates the transaction data used by the program
+     * @return
+     */
     private ArrayList<Transaction> generateContent(){
         ArrayList<Transaction> transactions = new ArrayList<>();
         transactions.add(new Transaction(LocalDate.of(2020,11, 1),"Morrisons","card", BigDecimal.valueOf(10.40),"Groceries"));
@@ -193,31 +219,37 @@ public class MainWindow {
         transactions.add(new Transaction(LocalDate.of(2020, 9,28),"PureGym","direct debit",BigDecimal.valueOf(40),"MyMonthlyDD"));
         transactions.add(new Transaction(LocalDate.of(2020, 1,28),"CYBG","direct debit",BigDecimal.valueOf(600),"MyMonthlyDD"));
         transactions.add(new Transaction(LocalDate.of(2020, 1,28),"PureGym","direct debit",BigDecimal.valueOf(40),"MyMonthlyDD"));
+        listedTransactions = transactions;
         return transactions;
     }
 
+    /**
+     * Populates the content table
+     * @param transactions The transactions to add to the table
+     */
     private void populateTable(ArrayList<Transaction> transactions){
-        DefaultTableModel tableModel = (DefaultTableModel) contentTable.getModel();
-        tableModel.setRowCount(0);
-        tableModel.setColumnCount(0);
-        tableModel.addColumn("Date");
-        tableModel.addColumn("Vendor");
-        tableModel.addColumn("Type");
-        tableModel.addColumn("Amount");
-        tableModel.addColumn("Category");
-        for(Transaction transaction : transactions){
-            tableModel.addRow(transaction.toArray());
-        }
+        TransactionTableModel transactionTableModel = new TransactionTableModel(transactions);
+        contentTable.setModel(transactionTableModel);
     }
 
-    private void populateCategorySelector(ArrayList<Transaction> transactions){
+    /**
+     * Populates the category selector using the given transactions
+     * @param transactions The transactions used to generate the category list
+     */
+    private void populateCategorySelector(List<Transaction> transactions){
         List<String> categories = getCatagoriesFromTransactions(transactions);
         DefaultComboBoxModel comboBoxModel = (DefaultComboBoxModel) categorySelector.getModel();
+        comboBoxModel.removeAllElements();
         comboBoxModel.addAll(categories);
 
     }
 
-    private List<String> getCatagoriesFromTransactions(ArrayList<Transaction> transactions){
+    /**
+     * Retrieves a list of the categories used in the transactions supplied
+     * @param transactions The transactions used to generate the category list
+     * @return The list of unique categories mentioned in the transactions supplied
+     */
+    private List<String> getCatagoriesFromTransactions(List<Transaction> transactions){
         List<String> categories = transactions.stream().map(Transaction::getCategory).distinct().sorted().collect(Collectors.toList());
         return categories;
     }
@@ -234,6 +266,10 @@ public class MainWindow {
 
     }
 
+    /**
+     * Returns the selected radio button
+     * @return The radio button selected or null if none selected
+     */
     private JRadioButton getSelectedRadioButton(){
         Enumeration<AbstractButton> buttons = selectionGroup.getElements();
         while(buttons.hasMoreElements()){
