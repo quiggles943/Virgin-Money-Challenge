@@ -211,14 +211,6 @@ public class MainWindow {
         transactions.add(new Transaction(LocalDate.of(2020, 10,28),"PureGym","direct debit",BigDecimal.valueOf(40),"MyMonthlyDD"));
         transactions.add(new Transaction(LocalDate.of(2020, 10,1),"M&S","card",BigDecimal.valueOf(5.99),"Groceries"));
         transactions.add(new Transaction(LocalDate.of(2020,9,30),"McMillan","internet",BigDecimal.valueOf(10)));
-
-        transactions.add(new Transaction(LocalDate.of(2020,8,15),"Amazon","internet",BigDecimal.valueOf(31.98),"OnlineShopping"));
-        transactions.add(new Transaction(LocalDate.of(2020,9,21),"Amazon","internet",BigDecimal.valueOf(12.99),"OnlineShopping"));
-        transactions.add(new Transaction(LocalDate.of(2020,11,8),"Amazon","internet",BigDecimal.valueOf(42.32),"OnlineShopping"));
-        transactions.add(new Transaction(LocalDate.of(2020, 9,28),"CYBG","direct debit",BigDecimal.valueOf(600),"MyMonthlyDD"));
-        transactions.add(new Transaction(LocalDate.of(2020, 9,28),"PureGym","direct debit",BigDecimal.valueOf(40),"MyMonthlyDD"));
-        transactions.add(new Transaction(LocalDate.of(2020, 1,28),"CYBG","direct debit",BigDecimal.valueOf(600),"MyMonthlyDD"));
-        transactions.add(new Transaction(LocalDate.of(2020, 1,28),"PureGym","direct debit",BigDecimal.valueOf(40),"MyMonthlyDD"));
         listedTransactions = transactions;
         return transactions;
     }
